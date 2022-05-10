@@ -17,10 +17,13 @@
         <h1>Weather App</h1>
     </nav>
     <main class="main">
+        <!-- side section - search & recently searched -->
         <aside class="search-section">
             <h2>Search City:</h2>
-            <input type="text" class="form-control search-input" id="searchInput" placeholder="Birmingham">
-            <button type="button" class="btn btn-primary search-btn">Search</button>
+            <form id="search-input">
+                <input type="text" class="form-control search-input" id="searchInput" placeholder="Birmingham">
+                <button type="submit" class="btn btn-primary search-btn">Search</button>
+            </form>
             <hr>
             <div class="recent">
                 <button type="button" class="btn btn-primary recent-btn">Recent 1</button>
@@ -30,6 +33,7 @@
                 <button type="button" class="btn btn-primary recent-btn">Recent 5</button>
             </div>
         </aside>
+        <!-- main section - summary & 5-day-forecast -->
         <section class="weather-section">
             <div class="summary-section">
                 <h2>Birmingham (10/05/2022)</h2>
@@ -88,6 +92,21 @@
 
     <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+    <!-- moment JS -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+    
     <!-- Author JS -->
     <script src="./assets/js/index.js"></script>
 </body>
