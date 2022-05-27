@@ -162,10 +162,32 @@ const setCurrentData = (currentData) => {
 }
 
 const setForecastData = (forecastData) => {
-  console.log(forecastData.weatherData.daily)
-  const dateString = moment.unix("1653739200").format("DD/MM/YYYY");
-  console.log(dateString)
+  const dailyData = forecastData.weatherData.daily;
+  dailyData.length=5;
+  $("#forecastSection").empty();
+  dailyData.forEach(dailyWeather => generateWeatherCard(dailyWeather));
 }
+
+const generateWeatherCard = (weatherData) => {
+  console.log(weatherData)
+  const dateString = moment.unix(weatherData.dt).format("DD/MM/YYYY");
+  $("#forecastSection").append(`
+    <div class="card" style="width: 18rem;">
+      <img src="http://openweathermap.org/img/w/04d.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">${dateString}</h5>
+        <p class="card-text">Temp: ${weatherData.temp.max}</p>
+        <p class="card-text">Wind: ${weatherData.wind_speed} Mph</p>
+        <p class="card-text">Humidity: ${weatherData.humidity}%</p>
+      </div>
+    </div>
+`)
+
+}
+
+
+
+
 
 
 const onReady = () => {
