@@ -2,6 +2,8 @@ const searchInput = $("#search-input");
 const recentSearchesContainer = $("#recentSearchList")
 const apiKey = "59d35777f6ec5554a91df4c08291fafc";
 
+
+
 // local storage
 const readFromLocalStorage = (key, defaultValue) => {
   // get from LS using key name
@@ -24,6 +26,22 @@ const writeToLocalStorage = (key, value) => {
   // set stringified value to LS for key name
   localStorage.setItem(key, stringifiedValue);
 };
+
+
+const getUserLocation = () => {
+  if('geolocation' in navigator) {
+    /* geolocation is available */
+    const data = navigator.geolocation.getCurrentPosition(async (position) => {
+      const localData = (await getForecastData(position.coords.latitude, position.coords.longitude));
+      $("#currentWeatherSection").text("Local Weather")
+      setForecastData({cityName: "Local Weather", weatherData: localData})
+    });
+  } else {
+    /* geolocation IS NOT available */
+    console.log("not Working")
+  }
+
+}
 
 // construct URL and fetch data
 
@@ -66,24 +84,29 @@ const fetchWeatherData = async (cityName) => {
   const lon = currentData?.coord?.lon;
   const displayCityName = currentData?.name;
 
-    // forecast url
-    const forecastDataUrl = constructUrl(
-      "https://api.openweathermap.org/data/2.5/onecall",
-      {
-        lat: lat,
-        lon: lon,
-        exclude: "minutely,hourly",
-        units: "metric",
-        appid: apiKey,
-      }
-    );
-  
-    const forecastData = await fetchData(forecastDataUrl);
+  const forecastData = await getForecastData(lat, lon)
   
     return {
       cityName: displayCityName,
       weatherData: forecastData,
     };
+}
+
+const getForecastData = async (lat, lon) => {
+      // forecast url
+      const forecastDataUrl = constructUrl(
+        "https://api.openweathermap.org/data/2.5/onecall",
+        {
+          lat: lat,
+          lon: lon,
+          exclude: "minutely,hourly",
+          units: "metric",
+          appid: apiKey,
+        }
+      );
+    
+      const forecastData = await fetchData(forecastDataUrl);
+      return forecastData
 }
 
 // display recently searched section
@@ -190,7 +213,6 @@ const generateWeatherCard = (weatherData) => {
 
 const handleSearchClick = async(event) => {
   const target = $(event.target);
-
   // restrict clicks only from li
   if (target.is("li")) {
     // get data city attribute
@@ -206,6 +228,7 @@ const handleSearchClick = async(event) => {
 
 const onReady = () => {
   displayRecentSearches();
+  getUserLocation();
 };
 
 $(document).ready(onReady);
