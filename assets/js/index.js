@@ -90,7 +90,6 @@ const fetchWeatherData = async (cityName) => {
 const displayRecentSearches = () => {
   const recentlySearched = readFromLocalStorage("recentlySearched", []);
   if (recentlySearched.length) {
-    console.log(recentlySearched.length)
     $("#recentSearchList").empty();
     recentlySearched.forEach(city => createRecentCity(city, true));
   } else {
@@ -121,7 +120,6 @@ const handleFormSubmit = async (event) => {
   if (cityName) {
     // get recent search data
     reformattedCityName = reformatString(cityName);
-    console.log(reformattedCityName)
     const recentlySearched = readFromLocalStorage("recentlySearched", []);
 
     if (!recentlySearched.includes(reformattedCityName)) {
@@ -130,7 +128,6 @@ const handleFormSubmit = async (event) => {
     }
     if (recentlySearched.length > 5){
       recentlySearched.pop();
-      console.log("popped")
     }
 
     writeToLocalStorage("recentlySearched", recentlySearched);
@@ -140,7 +137,9 @@ const handleFormSubmit = async (event) => {
   // call from API to get data
   const currentForecast = await fetchWeatherData(reformattedCityName);
 
-  console.log(currentForecast);
+  setCurrentData(currentForecast)
+  setForecastData(currentForecast)
+  
 };
 
 const reformatString = (cityName) => {
@@ -148,7 +147,25 @@ const reformatString = (cityName) => {
   return cityName.charAt(0).toUpperCase() + lowerCity.slice(1);
 }
 
+const setCurrentData = (currentData) => {
+  $("#currentWeatherSection").empty();
+  let now = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+  // now._d.split(' ').slice(0, 4).join(' ');
+  $("#currentWeatherSection").append(
+    `<h2 id="cityName">${currentData.cityName}</h2>
+    <p>${now}</p>
+    <p id="temp">Temperature: ${currentData.weatherData.current.temp}</p>
+    <p id="wind">Wind: ${currentData.weatherData.current.wind_speed} Mph</p>
+    <p id="humidity">Humidity: ${currentData.weatherData.current.humidity}%</p>
+    <p id="UV">UV index: ${currentData.weatherData.current.uvi}</p>`
+  );
+}
 
+const setForecastData = (forecastData) => {
+  console.log(forecastData.weatherData.daily)
+  const dateString = moment.unix("1653739200").format("DD/MM/YYYY");
+  console.log(dateString)
+}
 
 
 const onReady = () => {
