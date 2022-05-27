@@ -33,7 +33,7 @@ const getUserLocation = () => {
     /* geolocation is available */
     const data = navigator.geolocation.getCurrentPosition(async (position) => {
       const localData = (await getForecastData(position.coords.latitude, position.coords.longitude));
-      $("#currentWeatherSection").text("Local Weather")
+      $("#headerContainer").append(`<h4 id="localWeatherHeader">Local Weather</h4>`)
       setForecastData({cityName: "Local Weather", weatherData: localData})
     });
   } else {
@@ -59,6 +59,10 @@ const fetchData = async (url, options = {}) => {
       const data = await response.json();
       return data;
     } else {
+      console.log("Error")
+      $("#weatherError").removeClass("hide")
+      $("#weatherContainer").addClass("hide")
+
       throw new Error("Failed to fetch data");
     }
   } catch (error) {
@@ -177,29 +181,46 @@ const reformatString = (cityName) => {
 const setCurrentData = (currentData) => {
   $("#currentWeatherSection").empty();
   let now = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
-  // now._d.split(' ').slice(0, 4).join(' ');
+  const uviColor = getUVIClass(currentData.weatherData.current.uvi);
   $("#currentWeatherSection").append(
     `<h2 id="cityName">${currentData.cityName}</h2>
     <p>${now}</p>
     <p id="temp">Temperature: ${currentData.weatherData.current.temp}</p>
     <p id="wind">Wind: ${currentData.weatherData.current.wind_speed} Mph</p>
     <p id="humidity">Humidity: ${currentData.weatherData.current.humidity}%</p>
-    <p id="UV">UV index: ${currentData.weatherData.current.uvi}</p>`
+    <p id="UV" class=${uviColor}>UV index: ${currentData.weatherData.current.uvi}</p>`
   );
 }
 
+const getUVIClass = (uvi) => {
+  if (uvi >= 0 && uvi <= 2) {
+    return "bg-success";
+  }
+
+  if (uvi > 2 && uvi <= 8) {
+    return "bg-warning";
+  }
+  if (uvi > 8) {
+    return "bg-danger";
+  }
+};
+
 const setForecastData = (forecastData) => {
   const dailyData = forecastData.weatherData.daily;
+  dailyData.shift()
   dailyData.length=5;
   $("#forecastSection").empty();
   dailyData.forEach(dailyWeather => generateWeatherCard(dailyWeather));
 }
 
 const generateWeatherCard = (weatherData) => {
+  console.log(weatherData.weather[0].icon)
   const dateString = moment.unix(weatherData.dt).format("DD/MM/YYYY");
   $("#forecastSection").append(`
     <div class="card" style="width: 18rem;">
-      <img src="http://openweathermap.org/img/w/04d.png" class="card-img-top" alt="...">
+      <img src="http://openweathermap.org/img/w/${
+        weatherData.weather[0].icon
+      }.png" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title">${dateString}</h5>
         <p class="card-text">Temp: ${weatherData.temp.max}</p>
@@ -227,8 +248,9 @@ const handleSearchClick = async(event) => {
 
 
 const onReady = () => {
-  displayRecentSearches();
   getUserLocation();
+  displayRecentSearches();
+
 };
 
 $(document).ready(onReady);
