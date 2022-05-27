@@ -63,6 +63,8 @@ const fetchData = async (url, options = {}) => {
 const displayRecentSearches = () => {
   const recentlySearched = readFromLocalStorage("recentlySearched", []);
   if (recentlySearched.length) {
+    console.log(recentlySearched.length)
+    $("#recentSearchList").empty();
     recentlySearched.forEach(city => createRecentCity(city, true));
   } else {
     createRecentCity(null, false)
@@ -70,10 +72,14 @@ const displayRecentSearches = () => {
 }
 
 const createRecentCity = (city, canDisplay) => {
+
   if (canDisplay){
     $("#recentSearchList").append(`<li type="button" class="btn btn-primary recent-btn">${city}</li>`)
+    if ($("#recentPlaceholder")){
+      $("#recentPlaceholder").remove();
+    }
   } else {
-    $("#recentSearchList").append(`<li class="btn btn-primary recent-btn">Please Search</li>`)
+    $("#recentSearchList").append(`<li id="recentPlaceholder" class="btn btn-primary recent-btn">Please Search</li>`)
   }
   
 }
@@ -93,7 +99,11 @@ const handleFormSubmit = async (event) => {
 
     if (!recentlySearched.includes(cityName)) {
       // add city to recently searched
-      recentlySearched.push(cityName)
+      recentlySearched.unshift(cityName)
+    }
+    if (recentlySearched.length > 5){
+      recentlySearched.pop();
+      console.log("popped")
     }
 
     writeToLocalStorage("recentlySearched", recentlySearched);
