@@ -1,4 +1,5 @@
 const searchInput = $("#search-input");
+const recentSearchesContainer = $("#recentSearchList")
 const apiKey = "59d35777f6ec5554a91df4c08291fafc";
 
 // local storage
@@ -100,10 +101,11 @@ const displayRecentSearches = () => {
 const createRecentCity = (city, canDisplay) => {
 
   if (canDisplay){
-    $("#recentSearchList").append(`<li type="button" class="btn btn-primary recent-btn">${city}</li>`)
+    $("#recentSearchList").append(`<li type="button" data-city="${city}" class="btn btn-primary recent-btn">${city}</li>`)
     if ($("#recentPlaceholder")){
       $("#recentPlaceholder").remove();
     }
+
   } else {
     $("#recentSearchList").append(`<li id="recentPlaceholder" class="btn btn-primary recent-btn">Please Search</li>`)
   }
@@ -147,6 +149,8 @@ const reformatString = (cityName) => {
   return cityName.charAt(0).toUpperCase() + lowerCity.slice(1);
 }
 
+// display data
+
 const setCurrentData = (currentData) => {
   $("#currentWeatherSection").empty();
   let now = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
@@ -169,7 +173,6 @@ const setForecastData = (forecastData) => {
 }
 
 const generateWeatherCard = (weatherData) => {
-  console.log(weatherData)
   const dateString = moment.unix(weatherData.dt).format("DD/MM/YYYY");
   $("#forecastSection").append(`
     <div class="card" style="width: 18rem;">
@@ -185,7 +188,18 @@ const generateWeatherCard = (weatherData) => {
 
 }
 
+const handleSearchClick = async(event) => {
+  const target = $(event.target);
 
+  // restrict clicks only from li
+  if (target.is("li")) {
+    // get data city attribute
+    const cityName = target.attr("data-city");
+    const weatherData = await fetchWeatherData(cityName);
+    setCurrentData(weatherData)
+    setForecastData(weatherData)
+  }
+}
 
 
 
@@ -195,4 +209,5 @@ const onReady = () => {
 };
 
 $(document).ready(onReady);
+recentSearchesContainer.click(handleSearchClick);
 searchInput.submit(handleFormSubmit);
