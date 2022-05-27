@@ -111,18 +111,26 @@ const handleFormSubmit = async (event) => {
   }
 
   // call from API to get data
-  const currentForecast = getCurrentForecast();
+  const currentForecast = await fetchWeatherData(cityName);
 
   console.log(currentForecast);
 };
 
-const getCurrentForecast = async () => {
-  const currentData = await fetch(
-    "https://api.openweathermap.org/data/2.5/weather?q=birmingham&appid=59d35777f6ec5554a91df4c08291fafc"
+
+const fetchWeatherData = async (cityName) => {
+  // fetch data from API
+  // current data url
+  const currentDataUrl = constructUrl(
+    "https://api.openweathermap.org/data/2.5/weather",
+    {
+      q: cityName,
+      appid: apiKey,
+    }
   );
 
+  const currentData = await fetchData(currentDataUrl);
   return currentData;
-};
+}
 
 const onReady = () => {
   displayRecentSearches();
