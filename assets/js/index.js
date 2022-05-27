@@ -24,7 +24,7 @@ const writeToLocalStorage = (key, value) => {
   localStorage.setItem(key, stringifiedValue);
 };
 
-// get api data
+// construct URL and fetch data
 
 const constructUrl = (baseUrl, params) => {
   const queryParams = new URLSearchParams(params).toString();
@@ -46,76 +46,6 @@ const fetchData = async (url, options = {}) => {
     throw new Error(error.message);
   }
 };
-
-
-// get user input
-
-// read and save to recently searched
-
-// display only 5 recently searched
-
-// get current data
-
-// get forecast
-
-
-
-const displayRecentSearches = () => {
-  const recentlySearched = readFromLocalStorage("recentlySearched", []);
-  if (recentlySearched.length) {
-    console.log(recentlySearched.length)
-    $("#recentSearchList").empty();
-    recentlySearched.forEach(city => createRecentCity(city, true));
-  } else {
-    createRecentCity(null, false)
-  }
-}
-
-const createRecentCity = (city, canDisplay) => {
-
-  if (canDisplay){
-    $("#recentSearchList").append(`<li type="button" class="btn btn-primary recent-btn">${city}</li>`)
-    if ($("#recentPlaceholder")){
-      $("#recentPlaceholder").remove();
-    }
-  } else {
-    $("#recentSearchList").append(`<li id="recentPlaceholder" class="btn btn-primary recent-btn">Please Search</li>`)
-  }
-  
-}
-
-
-
-
-
-// user input
-const handleFormSubmit = async (event) => {
-  event.preventDefault();
-  const cityName = $("#searchInput").val();
-
-  if (cityName) {
-    // get recent search data
-    const recentlySearched = readFromLocalStorage("recentlySearched", []);
-
-    if (!recentlySearched.includes(cityName)) {
-      // add city to recently searched
-      recentlySearched.unshift(cityName)
-    }
-    if (recentlySearched.length > 5){
-      recentlySearched.pop();
-      console.log("popped")
-    }
-
-    writeToLocalStorage("recentlySearched", recentlySearched);
-    displayRecentSearches();
-  }
-
-  // call from API to get data
-  const currentForecast = await fetchWeatherData(cityName);
-
-  console.log(currentForecast);
-};
-
 
 const fetchWeatherData = async (cityName) => {
   // fetch data from API
@@ -154,6 +84,72 @@ const fetchWeatherData = async (cityName) => {
       weatherData: forecastData,
     };
 }
+
+// display recently searched section
+
+const displayRecentSearches = () => {
+  const recentlySearched = readFromLocalStorage("recentlySearched", []);
+  if (recentlySearched.length) {
+    console.log(recentlySearched.length)
+    $("#recentSearchList").empty();
+    recentlySearched.forEach(city => createRecentCity(city, true));
+  } else {
+    createRecentCity(null, false)
+  }
+}
+
+const createRecentCity = (city, canDisplay) => {
+
+  if (canDisplay){
+    $("#recentSearchList").append(`<li type="button" class="btn btn-primary recent-btn">${city}</li>`)
+    if ($("#recentPlaceholder")){
+      $("#recentPlaceholder").remove();
+    }
+  } else {
+    $("#recentSearchList").append(`<li id="recentPlaceholder" class="btn btn-primary recent-btn">Please Search</li>`)
+  }
+  
+}
+
+// handle user input
+
+const handleFormSubmit = async (event) => {
+  event.preventDefault();
+  const cityName = $("#searchInput").val();
+  let reformattedCityName = "";
+
+  if (cityName) {
+    // get recent search data
+    reformattedCityName = reformatString(cityName);
+    console.log(reformattedCityName)
+    const recentlySearched = readFromLocalStorage("recentlySearched", []);
+
+    if (!recentlySearched.includes(reformattedCityName)) {
+      // add city to recently searched
+      recentlySearched.unshift(reformattedCityName)
+    }
+    if (recentlySearched.length > 5){
+      recentlySearched.pop();
+      console.log("popped")
+    }
+
+    writeToLocalStorage("recentlySearched", recentlySearched);
+    displayRecentSearches();
+  }
+
+  // call from API to get data
+  const currentForecast = await fetchWeatherData(reformattedCityName);
+
+  console.log(currentForecast);
+};
+
+const reformatString = (cityName) => {
+  lowerCity = cityName.toLowerCase();
+  return cityName.charAt(0).toUpperCase() + lowerCity.slice(1);
+}
+
+
+
 
 const onReady = () => {
   displayRecentSearches();
