@@ -129,7 +129,30 @@ const fetchWeatherData = async (cityName) => {
   );
 
   const currentData = await fetchData(currentDataUrl);
-  return currentData;
+
+  // get lat, lon and city name
+  const lat = currentData?.coord?.lat;
+  const lon = currentData?.coord?.lon;
+  const displayCityName = currentData?.name;
+
+    // forecast url
+    const forecastDataUrl = constructUrl(
+      "https://api.openweathermap.org/data/2.5/onecall",
+      {
+        lat: lat,
+        lon: lon,
+        exclude: "minutely,hourly",
+        units: "metric",
+        appid: apiKey,
+      }
+    );
+  
+    const forecastData = await fetchData(forecastDataUrl);
+  
+    return {
+      cityName: displayCityName,
+      weatherData: forecastData,
+    };
 }
 
 const onReady = () => {
