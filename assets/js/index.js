@@ -25,6 +25,8 @@ const writeToLocalStorage = (key, value) => {
   localStorage.setItem(key, stringifiedValue);
 };
 
+// location permissions
+
 const getUserLocation = () => {
   if ("geolocation" in navigator) {
     /* geolocation is available */
