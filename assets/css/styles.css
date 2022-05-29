@@ -5,6 +5,8 @@ html {
 body {
     background-image: linear-gradient(#7da3be, #f1d7c3);
     background-attachment: fixed;
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 /* nav section */
