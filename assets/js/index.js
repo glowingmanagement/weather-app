@@ -40,9 +40,6 @@ const getUserLocation = () => {
       );
       setForecastData({ cityName: "Local Weather", weatherData: localData });
     });
-  } else {
-    /* geolocation IS NOT available */
-    console.log("not Working");
   }
 };
 
@@ -62,7 +59,6 @@ const fetchData = async (url, options = {}) => {
       const data = await response.json();
       return data;
     } else {
-      console.log("Error");
       $("#weatherError").removeClass("hide");
       $("#weatherContainer").addClass("hide");
       $("#currentWeatherSection").addClass("hide");
@@ -223,7 +219,6 @@ const setForecastData = (forecastData) => {
 };
 
 const generateWeatherCard = (weatherData) => {
-  console.log(weatherData.weather[0].icon);
   const dateString = moment.unix(weatherData.dt).format("DD/MM/YYYY");
   $("#forecastSection").append(`
     <div class="card" style="width: 18rem;">
