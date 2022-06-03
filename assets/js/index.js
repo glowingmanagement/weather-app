@@ -222,7 +222,7 @@ const generateWeatherCard = (weatherData) => {
   const dateString = moment.unix(weatherData.dt).format("DD/MM/YYYY");
   $("#forecastSection").append(`
     <div class="card" style="width: 18rem;">
-      <img src="http://openweathermap.org/img/w/${weatherData.weather[0].icon}.png" class="card-img-top" alt="...">
+      <img src="https://openweathermap.org/img/w/${weatherData.weather[0].icon}.png" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title">${dateString}</h5>
         <p class="card-text">Temp: ${weatherData.temp.max}</p>
